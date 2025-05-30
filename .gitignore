@@ -11,6 +11,11 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+/[Aa]ssets/*
+!/[Aa]ssets/[Ss]cripts/
+!/[Aa]ssets/[Ss]cenes/
+!/[Aa]ssets/[Pp]refabs/
+!//[Aa]ssets/[Rr]esources/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
