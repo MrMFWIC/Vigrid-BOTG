@@ -8,6 +8,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 {
     private CardPlacementManager cardPlacementManager;
     private HandManager handmanager;
+    private CardPlacementCell lastHighlightedCell;
 
     private RectTransform rectTransform;
     private Canvas canvas;
@@ -158,15 +159,50 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         if (!playArrow.activeSelf)
             playArrow.SetActive(true);
 
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        uiRaycaster.Raycast(pointerData, results);
+        CardPlacementCell hoveredCell = null;
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.CompareTag("CardSlot"))
+            {
+                hoveredCell = result.gameObject.GetComponentInParent<CardPlacementCell>();
+                break;
+            }
+        }
+
+        if (hoveredCell != lastHighlightedCell)
+        {
+            if (lastHighlightedCell != null)
+            {
+                lastHighlightedCell.HighlightSlot(false, gameObject);
+            }
+            if (hoveredCell != null)
+            {
+                hoveredCell.HighlightSlot(true, gameObject);
+            }
+
+            lastHighlightedCell = hoveredCell;
+        }
+        else if (hoveredCell == null && lastHighlightedCell != null)
+        {
+            lastHighlightedCell.HighlightSlot(false, gameObject);
+            lastHighlightedCell = null;
+        }
+
         if (Input.GetMouseButtonUp(0))
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            if (lastHighlightedCell != null)
             {
-                position = Input.mousePosition
-            };
+                lastHighlightedCell.HighlightSlot(false, gameObject);
+            }
 
-            List<RaycastResult> results = new List<RaycastResult>();
-            uiRaycaster.Raycast(pointerData, results);
             CardPlacementCell nearestCell = null;
             float nearestDistance = float.MaxValue;
 
@@ -207,6 +243,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                 Debug.Log("CardPlacementCell component not found.");
             }
 
+            lastHighlightedCell = null;
             TransitionToState0();
         }
     }

@@ -203,4 +203,5 @@ MonoBehaviour:
   cellIndex: 0
   isOccupied: 0
   cardInCell: {fileID: 0}
+  highlight: {fileID: 4228464213353649136}
   cardRectTransform: {fileID: 0}

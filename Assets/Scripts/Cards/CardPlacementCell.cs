@@ -8,7 +8,33 @@ public class CardPlacementCell : MonoBehaviour
     public int cellIndex;
     public bool isOccupied = false;
     public GameObject cardInCell;
+    public GameObject highlight;
     public RectTransform cardRectTransform;
+    public CardPlacementManager cardPlacementManager;
+
+    private void Start()
+    {
+        cardPlacementManager = FindFirstObjectByType<CardPlacementManager>();
+    }
+
+    public void HighlightSlot(bool state, GameObject card)
+    {
+        if (isOccupied) return;
+
+        if (highlight != null)
+        {
+            highlight.SetActive(state);
+
+            if (!cardPlacementManager.IsValidSlot(this.cellIndex, card))
+            {
+                highlight.GetComponent<Image>().color = new Color(1, 0, 0, 0.75f); // Red for invalid slot
+            }
+            else
+            {
+                highlight.GetComponent<Image>().color = new Color(0, 1, 0, 0.75f); // Green for valid slot
+            }
+        }
+    }
 
     public void PlaceCard(GameObject card)
     {
