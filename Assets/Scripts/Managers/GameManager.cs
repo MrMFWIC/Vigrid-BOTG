@@ -5,11 +5,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
     public OptionsManager OptionsManager { get; private set; }
     public AudioManager AudioManager { get; private set; }
     public DeckManager DeckManager { get; private set; }
     public CardPlacementManager CardPlacementManager { get; private set; }
+    public CardEffectRunner CardEffectRunner { get; private set; }
 
     private int playerHealth;
     private int playerEssence;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
         AudioManager = GetComponentInChildren<AudioManager>();
         DeckManager = GetComponentInChildren<DeckManager>();
         CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
+        CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
 
         if (OptionsManager == null)
         {
@@ -88,6 +89,20 @@ public class GameManager : MonoBehaviour
             {
                 Instantiate(prefab, transform.position, Quaternion.identity, transform);
                 CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
+            }
+        }
+
+        if (CardEffectRunner == null)
+        {
+            GameObject prefab = Resources.Load<GameObject>("Prefabs/CardEffectRunner");
+            if (prefab == null)
+            {
+                Debug.LogError($"CardEffectRunner prefab not found.");
+            }
+            else
+            {
+                Instantiate(prefab, transform.position, Quaternion.identity, transform);
+                CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
             }
         }
     }

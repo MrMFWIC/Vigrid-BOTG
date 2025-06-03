@@ -545,6 +545,7 @@ GameObject:
   - component: {fileID: 581872691862583097}
   - component: {fileID: 3016085931307630600}
   - component: {fileID: 6330299010267247517}
+  - component: {fileID: 1595879894422596824}
   m_Layer: 0
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -655,6 +656,20 @@ MonoBehaviour:
   glowEffect: {fileID: 9137599970687603091}
   playArrow: {fileID: 5634570938283071836}
   lerpFactor: 0.2
+--- !u!114 &1595879894422596824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3214017377938237867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0da34084e408e74387852996036557d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 0
+  currentHealth: 0
 --- !u!1 &3407995523580392388
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,9 +1257,11 @@ MonoBehaviour:
   arrowPrefab: {fileID: 5619646506854300848, guid: 904dad94d7f5ae44dad1abe2f661776e, type: 3}
   dotPrefab: {fileID: 1857935393990135419, guid: f787bfffeea45ed44b9ee1bdc91ecc75, type: 3}
   poolSize: 50
-  dotSpacing: 40
+  spacing: 50
   arrowAngleAdjustment: 180
   dotsToSkip: 1
+  baseScreenWidth: 1920
+  spacingScale: 0
 --- !u!1 &5786078302481959996
 GameObject:
   m_ObjectHideFlags: 0

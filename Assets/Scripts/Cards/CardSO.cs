@@ -20,6 +20,13 @@ public class CardSO : ScriptableObject
     public Sprite cardImage;
     public Affiliation affiliation;
 
+    [Header("Effects")]
+    public List<CardEffectBase> onPlayEffects;
+    public List<CardEffectBase> onAttackEffects;
+    public List<CardEffectBase> onDefendEffects;
+    public List<CardEffectBase> onDeathEffects;
+    public List<CardEffectBase> fromHandEffects;
+
     public enum CardType
     {
         Unit,
