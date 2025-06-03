@@ -18,6 +18,7 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private int currentState = 0;
+    private bool isPlayed = false;
 
     [SerializeField] private float selectScale = 1.2f;
     [SerializeField] private Vector2 cardPlay;
@@ -31,15 +32,20 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         cardPlacementManager = FindFirstObjectByType<CardPlacementManager>();
         handmanager = FindFirstObjectByType<HandManager>();
         rectTransform = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
-        uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
         originalScale = rectTransform.localScale;
         originalPosition = rectTransform.localPosition;
         originalRotation = rectTransform.localRotation;
     }
 
+    void Start()
+    {
+        StartCoroutine(DelayedCanvasInit());
+    }
+
     void Update()
     {
+        if (isPlayed) return;
+
         switch (currentState)
         {
             case 1:
@@ -56,6 +62,23 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
                 HandlePlayState();
                 break;
         }
+    }
+
+    public void DisableInteractions()
+    {
+        isPlayed = true;
+        glowEffect.SetActive(false);
+        playArrow.SetActive(false);
+    }
+
+    public void EnableInteractions(GameObject card)
+    {
+        isPlayed = false;
+        foreach (var graphic in card.GetComponentsInChildren<Graphic>())
+        {
+            graphic.raycastTarget = true;
+        }
+        TransitionToState0();
     }
 
     private void TransitionToState0()
@@ -185,6 +208,20 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
             }
 
             TransitionToState0();
+        }
+    }
+
+    private IEnumerator DelayedCanvasInit()
+    {
+        yield return null; // Wait for the next frame to ensure the canvas is initialized
+        canvas = GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("Canvas not found in hierarchy for card: " + gameObject.name);
+        }
+        else
+        {
+            uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
         }
     }
 }

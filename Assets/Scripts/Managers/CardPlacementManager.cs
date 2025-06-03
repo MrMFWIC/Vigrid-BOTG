@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardPlacementManager : MonoBehaviour
 {
@@ -112,7 +113,12 @@ public class CardPlacementManager : MonoBehaviour
     {
         CardSO cardData = card.GetComponent<CardDisplay>().cardInstance;
         playerSlots[index].PlaceCard(card);
+        card.GetComponent<CardMovement>().DisableInteractions();
         card.GetComponent<CardMovement>().enabled = false;
+        foreach (var graphic in card.GetComponentsInChildren<Graphic>())
+        {
+            graphic.raycastTarget = false;
+        }
     }
 
     public void PlaceCardInEnemySlot(int index, GameObject card)

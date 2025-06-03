@@ -13,10 +13,25 @@ public class CardPlacementCell : MonoBehaviour
     public void PlaceCard(GameObject card)
     {
         GameObject newObj = Instantiate(card, transform.position, Quaternion.identity);
+        newObj.transform.SetParent(transform);
+        if (cellIndex == 0)
+        {
+            newObj.transform.localScale = new Vector3(1, 1.4f, 1);
+        }
+        else
+        {
+            newObj.transform.localScale = Vector3.one;
+        }
 
         if (newObj != null )
         {
             Destroy(card);
+            newObj.GetComponent<CardMovement>().DisableInteractions();
+            newObj.GetComponent<CardMovement>().enabled = false;
+            foreach (var graphic in newObj.GetComponentsInChildren<Graphic>())
+            {
+                graphic.raycastTarget = false;
+            }
         }
         else
         {
@@ -24,15 +39,9 @@ public class CardPlacementCell : MonoBehaviour
             return;
         }
 
-        newObj.transform.SetParent(transform);
         cardInCell = newObj;
         isOccupied = true;
-
-        /*cardRectTransform = card.GetComponent<RectTransform>();
-        cardInCell = card;
-        cardRectTransform.SetParent(gameObject.GetComponent<RectTransform>());
-        cardRectTransform.localPosition = Vector3.zero;
-        isOccupied = true;*/
+        Debug.Log("Card parent after placement: " + newObj.transform.parent.name);
     }
 
     public void RemoveCard()
