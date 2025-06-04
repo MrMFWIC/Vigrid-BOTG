@@ -7,17 +7,17 @@ public class DamageEffect : CardEffectBase
 {
     public int damageAmount;
 
-    public override void ApplyEffect(GameObject owner, GameObject target)
+    public override void ApplyEffect(CardContext context)
     {
-        var health = target.GetComponent<HealthComponent>();
+        var health = context.Target.GetComponent<HealthComponent>();
         if (health != null)
         {
             health.TakeDamage(damageAmount);
-            Debug.Log($"{owner.name} deals {damageAmount} damage to {target.name}");
+            Debug.Log($"{context.Owner.name} deals {damageAmount} damage to {context.Target.name}");
         }
         else
         {
-            Debug.LogWarning($"Target {target.name} does not have a HealthComponent.");
+            Debug.LogWarning($"Target {context.Target.name} does not have a HealthComponent.");
         }
     }
 }

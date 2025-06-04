@@ -8,7 +8,7 @@ public class CardSO : ScriptableObject
     [Header("Info")]
     public CardType cardType;
     public AttackLimitations attackLimitations;
-    public EffectType effectType;
+    public EffectTriggerType effectType;
 
     [Header("Text")]
     public string cardName;
@@ -51,7 +51,7 @@ public class CardSO : ScriptableObject
         CantAttack
     }
 
-    public enum EffectType
+    public enum EffectTriggerType
     {
         OnPlay,
         OnAttack,
@@ -59,6 +59,9 @@ public class CardSO : ScriptableObject
         OnDeath,
         FromHand,
         FromDeck,
+        Passive,
+        Conditional,
+        Optional,
         Spell
     }
 

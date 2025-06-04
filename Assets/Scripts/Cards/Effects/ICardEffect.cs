@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface ICardEffect
 {
-    void ApplyEffect(GameObject owner, GameObject target);
+    bool CanTrigger(CardContext context);
+    void ApplyEffect(CardContext context);
 }
