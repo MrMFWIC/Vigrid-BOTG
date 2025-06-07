@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,6 +22,11 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             InitializeManagers();
+
+            if (SceneManager.GetActiveScene().name == "Battlefield")
+            {
+                InitializeBattlefieldManagers();
+            }
         }
         else if (Instance != this)
         {
@@ -33,8 +39,6 @@ public class GameManager : MonoBehaviour
         OptionsManager = GetComponentInChildren<OptionsManager>();
         AudioManager = GetComponentInChildren<AudioManager>();
         DeckManager = GetComponentInChildren<DeckManager>();
-        CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
-        CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
 
         if (OptionsManager == null)
         {
@@ -77,6 +81,12 @@ public class GameManager : MonoBehaviour
                 DeckManager = GetComponentInChildren<DeckManager>();
             }
         }
+    }
+
+    private void InitializeBattlefieldManagers()
+    {
+        CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
+        CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
 
         if (CardPlacementManager == null)
         {
