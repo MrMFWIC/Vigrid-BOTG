@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DeckManager : MonoBehaviour
 {
@@ -13,6 +14,11 @@ public class DeckManager : MonoBehaviour
 
     void Start()
     {
+        if (SceneManager.GetActiveScene().name != "Battlefield")
+        {
+            return; // Only initialize in the Battlefield scene
+        }
+
         CardSO[] cards = Resources.LoadAll<CardSO>("Cards");
         allCards.AddRange(cards);
         handManager = FindFirstObjectByType<HandManager>();

@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public OptionsManager OptionsManager { get; private set; }
     public AudioManager AudioManager { get; private set; }
     public DeckManager DeckManager { get; private set; }
+    public UIManager UIManager { get; private set; }
     public CardPlacementManager CardPlacementManager { get; private set; }
     public CardEffectRunner CardEffectRunner { get; private set; }
 
@@ -39,6 +40,21 @@ public class GameManager : MonoBehaviour
         OptionsManager = GetComponentInChildren<OptionsManager>();
         AudioManager = GetComponentInChildren<AudioManager>();
         DeckManager = GetComponentInChildren<DeckManager>();
+        UIManager = GetComponentInChildren<UIManager>();
+
+        if (UIManager == null)
+        {
+            GameObject prefab = Resources.Load<GameObject>("Prefabs/UIManager");
+            if (prefab == null)
+            {
+                Debug.LogError($"UIManager prefab not found.");
+            }
+            else
+            {
+                Instantiate(prefab, transform.position, Quaternion.identity, transform);
+                UIManager = GetComponentInChildren<UIManager>();
+            }
+        }
 
         if (OptionsManager == null)
         {
@@ -115,6 +131,11 @@ public class GameManager : MonoBehaviour
                 CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
             }
         }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
     public int PlayerHealth

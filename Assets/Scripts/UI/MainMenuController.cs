@@ -1,18 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Button startGameButton;
+    public Button settingsButton;
+    public Button archivesButton;
+    public Button quitButton;
+    public Button shopButton;
+
+    private void Start()
     {
-        
+        startGameButton.onClick.AddListener(OnStartGameClicked);
+        settingsButton.onClick.AddListener(OnSettingsClicked);
+        archivesButton.onClick.AddListener(OnArchivesClicked);
+        quitButton.onClick.AddListener(OnQuitClicked);
+        shopButton.onClick.AddListener(OnShopClicked);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnStartGameClicked()
     {
-        
+        // Load the game scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Battlefield");
+    }
+
+    private void OnSettingsClicked()
+    {
+        // Open settings menu
+        GameManager.Instance.UIManager.ShowPanel("SettingsMenu");
+    }
+
+    private void OnArchivesClicked()
+    {
+        // Open archives menu
+        GameManager.Instance.UIManager.ShowPanel("ArchivesMenu");
+    }
+
+
+    private void OnShopClicked()
+    {
+        // Open shop menu
+        GameManager.Instance.UIManager.ShowPanel("ShopMenu");
+    }
+
+    private void OnQuitClicked()
+    {
+        // Quit the application
+        GameManager.Instance.QuitGame();
     }
 }

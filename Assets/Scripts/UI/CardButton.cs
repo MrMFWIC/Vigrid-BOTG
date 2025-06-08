@@ -19,6 +19,14 @@ public class CardButton : MonoBehaviour
         cardImage.sprite = card.cardImage;
         cardNameText.text = card.cardName;
         cardCostText.text = card.cardCost.ToString();
-        cardATKText.text = card.cardAttack.ToString();
+
+        if (card.cardType == CardSO.CardType.Spell)
+        {
+            cardATKText.gameObject.SetActive(false);
+        }
+        else
+        {
+            cardATKText.text = card.cardAttack.ToString();
+        }
     }
 }
