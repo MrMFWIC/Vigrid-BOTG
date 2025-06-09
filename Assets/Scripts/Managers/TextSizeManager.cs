@@ -1,0 +1,59 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+public class TextSizeManager : MonoBehaviour
+{
+    public static TextSizeManager Instance;
+
+    public enum TextSize
+    {
+        Small,
+        Medium,
+        Large
+    }
+
+    public TextSize currentTextSize = TextSize.Medium;
+    public float smallTextSize = 14f;
+    public float mediumTextSize = 18f;
+    public float largeTextSize = 22f;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Optional
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public float GetFontSize()
+    {
+        return currentTextSize switch
+        {
+            TextSize.Small => smallTextSize,
+            TextSize.Medium => mediumTextSize,
+            TextSize.Large => largeTextSize,
+            _ => mediumTextSize, // Default to medium if not set
+        };
+    }
+
+    public void SetTextSize(int dropdownValue)
+    {
+        currentTextSize = (TextSize)dropdownValue;
+        UpdateAllTextSizes();
+    }
+
+    public void UpdateAllTextSizes()
+    {
+        foreach (DynamicTextSize dts in FindObjectsByType<DynamicTextSize>(FindObjectsSortMode.None))
+        {
+            dts.ApplyTextSize();
+        }
+    }
+}

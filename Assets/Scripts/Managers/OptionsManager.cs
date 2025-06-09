@@ -6,8 +6,6 @@ public class OptionsManager : MonoBehaviour
 {
     private AudioManager audioManager;
 
-    private bool muteAudio = false;
-
     void Start()
     {
         audioManager = GameManager.Instance.AudioManager;
