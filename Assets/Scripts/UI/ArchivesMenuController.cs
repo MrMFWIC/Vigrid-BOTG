@@ -13,6 +13,7 @@ public class ArchivesMenuController : MonoBehaviour
     public TMP_Dropdown sortDropdown;
     public Transform cardGridParent;
     public GameObject cardButtonPrefab;
+    public Button backButton;
 
     public List<CardSO> allCards;
     private List<GameObject> currentButtons = new List<GameObject>();
@@ -25,6 +26,7 @@ public class ArchivesMenuController : MonoBehaviour
         cardTypeFilterDropdown.onValueChanged.AddListener(_ => UpdateCardDisplay());
         affiliationFilterDropdown.onValueChanged.AddListener(_ => UpdateCardDisplay());
         sortDropdown.onValueChanged.AddListener(_ => UpdateCardDisplay());
+        backButton.onClick.AddListener(OnBackClicked);
     }
 
     void LoadAllCards()
@@ -122,5 +124,11 @@ public class ArchivesMenuController : MonoBehaviour
     {
         // Implement the logic to show card details, e.g., open a new panel with card info
         Debug.Log($"Showing details for {card.cardName}");
+    }
+
+    private void OnBackClicked()
+    {
+        GameManager.Instance.UIManager.HidePanel("ArchivesMenu");
+        GameManager.Instance.UIManager.ShowPanel("MainMenu");
     }
 }

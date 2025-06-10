@@ -18,6 +18,6 @@ public class DynamicTextSize : MonoBehaviour
 
     public void ApplyTextSize()
     {
-        text.fontSize = TextSizeManager.Instance.GetFontSize();
+        text.fontSize = GameManager.Instance.TextSizeManager.GetFontSize();
     }
 }

@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopMenuController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Button backButton;
+
+    private void Start()
     {
-        
+        backButton.onClick.AddListener(OnBackClicked);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnBackClicked()
     {
-        
+        GameManager.Instance.UIManager.HidePanel("ShopMenu");
+        GameManager.Instance.UIManager.ShowPanel("MainMenu");
     }
 }

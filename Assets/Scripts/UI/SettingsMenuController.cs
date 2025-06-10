@@ -14,43 +14,47 @@ public class SettingsMenuController : MonoBehaviour
     public Toggle muteToggle;
     public TMP_Dropdown textSizeDropdown;
     public TMP_Dropdown graphicsDropdown;
+    public Button backButton;
 
     void Start()
     {
         // Volume control
-        SyncSliderWithMixer(masterVolumeSlider, AudioManager.Instance.masterVolumeParameter);
-        SyncSliderWithMixer(musicVolumeSlider, AudioManager.Instance.musicVolumeParameter);
-        SyncSliderWithMixer(sfxVolumeSlider, AudioManager.Instance.sfxVolumeParameter);
-        SyncMuteWithMixer(muteToggle, AudioManager.Instance.audioMixer);
-        
+        SyncSliderWithMixer(masterVolumeSlider, GameManager.Instance.AudioManager.masterVolumeParameter);
+        SyncSliderWithMixer(musicVolumeSlider, GameManager.Instance.AudioManager.musicVolumeParameter);
+        SyncSliderWithMixer(sfxVolumeSlider, GameManager.Instance.AudioManager.sfxVolumeParameter);
+        SyncMuteWithMixer(muteToggle, GameManager.Instance.AudioManager.audioMixer);
+
         masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeChanged);
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
         sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
         muteToggle.onValueChanged.AddListener(OnMuteToggleChanged);
 
         // Text control
-        textSizeDropdown.value = (int)TextSizeManager.Instance.currentTextSize;
-        textSizeDropdown.onValueChanged.AddListener(TextSizeManager.Instance.SetTextSize);
+        textSizeDropdown.value = (int)GameManager.Instance.TextSizeManager.currentTextSize;
+        textSizeDropdown.onValueChanged.AddListener(GameManager.Instance.TextSizeManager.SetTextSize);
 
         //Graphics control
         graphicsDropdown.ClearOptions();
-        graphicsDropdown.AddOptions(GraphicsSettingsManager.Instance.GetQualityOptions().ToList());
-        graphicsDropdown.value = GraphicsSettingsManager.Instance.GetCurrentQualityLevel();
-        graphicsDropdown.onValueChanged.AddListener(GraphicsSettingsManager.Instance.SetQualityLevel);
+        graphicsDropdown.AddOptions(GameManager.Instance.GraphicsSettingsManager.GetQualityOptions().ToList());
+        graphicsDropdown.value = GameManager.Instance.GraphicsSettingsManager.GetCurrentQualityLevel();
+        graphicsDropdown.onValueChanged.AddListener(GameManager.Instance.GraphicsSettingsManager.SetQualityLevel);
+
+        //Misc
+        backButton.onClick.AddListener(OnBackClicked);
     }
 
     private void SyncMuteWithMixer(Toggle muteToggle, AudioMixer audiomixer)
     {
         float currentVolume;
-        audiomixer.GetFloat(AudioManager.Instance.masterVolumeParameter, out currentVolume);
-        AudioManager.Instance.isMuted = currentVolume <= -80f;
-        muteToggle.isOn = AudioManager.Instance.isMuted;
+        audiomixer.GetFloat(GameManager.Instance.AudioManager.masterVolumeParameter, out currentVolume);
+        GameManager.Instance.AudioManager.isMuted = currentVolume <= -80f;
+        muteToggle.isOn = GameManager.Instance.AudioManager.isMuted;
     }
 
     private void SyncSliderWithMixer(Slider slider, string parameterName)
     {
         float value;
-        if (AudioManager.Instance.audioMixer.GetFloat(parameterName, out value))
+        if (GameManager.Instance.AudioManager.audioMixer.GetFloat(parameterName, out value))
         {
             slider.value = Mathf.Pow(10f, value / 20f); // Convert dB to linear scale
         }
@@ -58,21 +62,27 @@ public class SettingsMenuController : MonoBehaviour
 
     public void OnMasterVolumeChanged(float value)
     {
-        AudioManager.Instance.SetMasterVolume(value);
+        GameManager.Instance.AudioManager.SetMasterVolume(value);
     }
 
     public void OnMusicVolumeChanged(float value)
     {
-        AudioManager.Instance.SetMusicVolume(value);
+        GameManager.Instance.AudioManager.SetMusicVolume(value);
     }
 
     public void OnSFXVolumeChanged(float value)
     {
-        AudioManager.Instance.SetSFXVolume(value);
+        GameManager.Instance.AudioManager.SetSFXVolume(value);
     }
 
     public void OnMuteToggleChanged(bool isMuted)
     {
-        AudioManager.Instance.MuteAll(isMuted);
+        GameManager.Instance.AudioManager.MuteAll(isMuted);
+    }
+
+    private void OnBackClicked()
+    {
+        GameManager.Instance.UIManager.HidePanel("SettingsMenu");
+        GameManager.Instance.UIManager.ShowPanel("MainMenu");
     }
 }

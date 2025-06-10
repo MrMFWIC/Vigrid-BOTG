@@ -31,12 +31,14 @@ public class MainMenuController : MonoBehaviour
     private void OnSettingsClicked()
     {
         // Open settings menu
+        GameManager.Instance.UIManager.HidePanel("MainMenu");
         GameManager.Instance.UIManager.ShowPanel("SettingsMenu");
     }
 
     private void OnArchivesClicked()
     {
         // Open archives menu
+        GameManager.Instance.UIManager.HidePanel("MainMenu");
         GameManager.Instance.UIManager.ShowPanel("ArchivesMenu");
     }
 
@@ -44,6 +46,7 @@ public class MainMenuController : MonoBehaviour
     private void OnShopClicked()
     {
         // Open shop menu
+        GameManager.Instance.UIManager.HidePanel("MainMenu");
         GameManager.Instance.UIManager.ShowPanel("ShopMenu");
     }
 

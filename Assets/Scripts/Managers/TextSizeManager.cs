@@ -5,8 +5,6 @@ using TMPro;
 
 public class TextSizeManager : MonoBehaviour
 {
-    public static TextSizeManager Instance;
-
     public enum TextSize
     {
         Small,
@@ -18,19 +16,6 @@ public class TextSizeManager : MonoBehaviour
     public float smallTextSize = 14f;
     public float mediumTextSize = 18f;
     public float largeTextSize = 22f;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     public float GetFontSize()
     {

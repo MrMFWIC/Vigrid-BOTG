@@ -6,12 +6,30 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public OptionsManager OptionsManager { get; private set; }
-    public AudioManager AudioManager { get; private set; }
-    public DeckManager DeckManager { get; private set; }
-    public UIManager UIManager { get; private set; }
-    public CardPlacementManager CardPlacementManager { get; private set; }
-    public CardEffectRunner CardEffectRunner { get; private set; }
+
+    private OptionsManager _optionsManager;
+    public OptionsManager OptionsManager => _optionsManager;
+
+    private AudioManager _audioManager;
+    public AudioManager AudioManager => _audioManager;
+
+    private DeckManager _deckManager;
+    public DeckManager DeckManager => _deckManager;
+    
+    private UIManager _uiManager;
+    public UIManager UIManager => _uiManager;
+    
+    private TextSizeManager _textSizeManager;
+    public TextSizeManager TextSizeManager => _textSizeManager;
+    
+    private GraphicsSettingsManager _graphicsSettingsManager;
+    public GraphicsSettingsManager GraphicsSettingsManager => _graphicsSettingsManager;
+    
+    private CardPlacementManager _cardPlacementManager;
+    public CardPlacementManager CardPlacementManager => _cardPlacementManager;
+    
+    private CardEffectRunner _cardEffectRunner;
+    public CardEffectRunner CardEffectRunner => _cardEffectRunner;
 
     private int playerHealth;
     private int playerEssence;
@@ -37,100 +55,44 @@ public class GameManager : MonoBehaviour
 
     private void InitializeManagers()
     {
-        OptionsManager = GetComponentInChildren<OptionsManager>();
-        AudioManager = GetComponentInChildren<AudioManager>();
-        DeckManager = GetComponentInChildren<DeckManager>();
-        UIManager = GetComponentInChildren<UIManager>();
-
-        if (UIManager == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/UIManager");
-            if (prefab == null)
-            {
-                Debug.LogError($"UIManager prefab not found.");
-            }
-            else
-            {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                UIManager = GetComponentInChildren<UIManager>();
-            }
-        }
-
-        if (OptionsManager == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/OptionsManager");
-            if (prefab == null)
-            {
-                Debug.LogError($"OptionsManager prefab not found.");
-            }
-            else
-            {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                OptionsManager = GetComponentInChildren<OptionsManager>();
-            }
-        }
-
-        if (AudioManager == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/AudioManager");
-            if (prefab == null)
-            {
-                Debug.LogError($"AudioManager prefab not found.");
-            }
-            else
-            {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                AudioManager = GetComponentInChildren<AudioManager>();
-            }
-        }
-
-        if (DeckManager == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/DeckManager");
-            if (prefab == null)
-            {
-                Debug.LogError($"DeckManager prefab not found.");
-            }
-            else
-            {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                DeckManager = GetComponentInChildren<DeckManager>();
-            }
-        }
+        _uiManager = LoadOrInstantiateManager(ref _uiManager, "UIManager");
+        _audioManager = LoadOrInstantiateManager(ref _audioManager, "AudioManager");
+        _deckManager = LoadOrInstantiateManager(ref _deckManager, "DeckManager");
+        _textSizeManager = LoadOrInstantiateManager(ref _textSizeManager, "TextSizeManager");
+        _graphicsSettingsManager = LoadOrInstantiateManager(ref _graphicsSettingsManager, "GraphicsSettingsManager");
+        _optionsManager = LoadOrInstantiateManager(ref _optionsManager, "OptionsManager");
     }
 
     private void InitializeBattlefieldManagers()
     {
-        CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
-        CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
+        _cardPlacementManager = LoadOrInstantiateManager(ref _cardPlacementManager, "CardPlacementManager");
+        _cardEffectRunner = LoadOrInstantiateManager(ref _cardEffectRunner, "CardEffectRunner");
+    }
 
-        if (CardPlacementManager == null)
+    private T LoadOrInstantiateManager<T>(ref T managerRef, string prefabName) where T : Component
+    {
+        managerRef = GetComponentInChildren<T>();
+
+        if (managerRef == null)
         {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/CardPlacementManager");
+            GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
             if (prefab == null)
             {
-                Debug.LogError($"CardPlacementManager prefab not found.");
+                Debug.LogError($"{prefabName} prefab not found.");
             }
             else
             {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                CardPlacementManager = GetComponentInChildren<CardPlacementManager>();
+                GameObject instance = Instantiate(prefab, transform.position, Quaternion.identity, transform);
+                managerRef = instance.GetComponent<T>();
+
+                if (managerRef == null)
+                {
+                    Debug.LogError($"{prefabName} component missing on prefab.");
+                }
             }
         }
 
-        if (CardEffectRunner == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/CardEffectRunner");
-            if (prefab == null)
-            {
-                Debug.LogError($"CardEffectRunner prefab not found.");
-            }
-            else
-            {
-                Instantiate(prefab, transform.position, Quaternion.identity, transform);
-                CardEffectRunner = GetComponentInChildren<CardEffectRunner>();
-            }
-        }
+        return managerRef;
     }
 
     public void QuitGame()
