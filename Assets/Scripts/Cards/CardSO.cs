@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Cards")]
 public class CardSO : ScriptableObject
 {
+    public string cardID; // Unique identifier for the card, can be used for serialization or database lookups
+
     [Header("Info")]
     public CardType cardType;
     public AttackLimitations attackLimitations;
@@ -15,6 +18,7 @@ public class CardSO : ScriptableObject
     public string cardEffect;
     public int cardCost;
     public int cardAttack;
+    public string cardLore;
 
     [Header("Visuals")]
     public Sprite cardImage;
@@ -32,6 +36,18 @@ public class CardSO : ScriptableObject
         Unit,
         Spell
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(cardID))
+        {
+            cardID = Guid.NewGuid().ToString();
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssets();
+        }
+    }
+#endif
 
     public enum Affiliation
     {

@@ -1,24 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class CardButton : MonoBehaviour
+public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    private CardSO cardData;
+    public CardSO cardData;
+    public string CardID => cardData != null ? cardData.cardID : string.Empty;
 
     public Image cardImage;
+    public Image cardBG;
+    private Color originalColor;
     public TextMeshProUGUI cardNameText;
     public TextMeshProUGUI cardCostText;
     public TextMeshProUGUI cardATKText;
+
+    private void Awake()
+    {
+        originalColor = cardBG.color;
+    }
 
     public void Setup(CardSO card)
     {
         cardData = card;
         cardImage.sprite = card.cardImage;
         cardNameText.text = card.cardName;
-        cardCostText.text = card.cardCost.ToString();
+        cardCostText.text = $"Cost: {card.cardCost.ToString()}";
 
         if (card.cardType == CardSO.CardType.Spell)
         {
@@ -26,7 +35,17 @@ public class CardButton : MonoBehaviour
         }
         else
         {
-            cardATKText.text = card.cardAttack.ToString();
+            cardATKText.text = $"ATK: {card.cardAttack.ToString()}";
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        cardBG.color = Color.green; // Highlight color on hover
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        cardBG.color = originalColor; // Reset to original color when not hovering
     }
 }

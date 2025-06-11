@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -30,6 +31,11 @@ public class CardMovement : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
     void Awake()
     {
+        if (SceneManager.GetActiveScene().name != "Battlefield")
+        {
+            this.enabled = false; // Disable this script if not in the Battlefield scene
+        }
+
         cardPlacementManager = FindFirstObjectByType<CardPlacementManager>();
         handmanager = FindFirstObjectByType<HandManager>();
         rectTransform = GetComponent<RectTransform>();

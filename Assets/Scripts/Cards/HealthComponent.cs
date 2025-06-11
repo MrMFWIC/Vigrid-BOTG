@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HealthComponent : MonoBehaviour
 {
+    public CardSO cardData; // Reference to the CardSO scriptable object
     public int startingHealth;
     public int currentHealth;
 
     private void Awake()
     {
-        startingHealth  = gameObject.GetComponent<CardSO>().cardAttack;
+        if (SceneManager.GetActiveScene().name != "Battlefield")
+        {
+            this.enabled = false; // Disable this script if not in the Battlefield scene
+        }
+
+        cardData = GetComponent<CardDisplay>().cardInstance;
+        startingHealth  = cardData.cardAttack;
         currentHealth = startingHealth;
     }
 
@@ -42,7 +50,7 @@ public class HealthComponent : MonoBehaviour
 
     void UpdateATKValue()
     {
-        gameObject.GetComponent<CardSO>().cardAttack = currentHealth;
+        cardData.cardAttack = currentHealth;
         CardDisplay cardDisplay = GetComponent<CardDisplay>();
         if (cardDisplay != null)
         {

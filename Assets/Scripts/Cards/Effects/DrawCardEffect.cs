@@ -20,7 +20,7 @@ public class DrawCardEffect : CardEffectBase
 
         for (int i = 0; i < cardsToDraw; i++)
         {
-            deckManager.DrawCard(handManager);
+            deckManager.DrawCard();
         }
 
         Debug.Log($"{context.Owner.name} triggered DrawCardEffect and drew {cardsToDraw} card(s).");
