@@ -86,55 +86,71 @@ public class ArchivesMenuController : MonoBehaviour
     {
         savedDecksDropdown.ClearOptions();
 
+        // Get saved deck names
         string[] files = Directory.GetFiles(Application.persistentDataPath, "*.json");
         List<string> deckNames = files
             .Select(f => Path.GetFileNameWithoutExtension(f))
             .ToList();
 
-        if (deckNames.Count == 0)
-        {
-            savedDecksDropdown.options.Add(new TMP_Dropdown.OptionData("No saved decks"));
-            savedDecksDropdown.interactable = false;
-            deleteDeckButton.interactable = false;
-        }
-        else
-        {
-            savedDecksDropdown.interactable = true;
-            deleteDeckButton.interactable = true;
-            savedDecksDropdown.AddOptions(deckNames);
-        }
+        // Add "New Deck" as first option
+        List<string> options = new List<string> { "New Deck" };
+        options.AddRange(deckNames);
 
+        savedDecksDropdown.AddOptions(options);
+        savedDecksDropdown.interactable = true;
+        deleteDeckButton.interactable = deckNames.Count > 0;
+
+        // Select the loaded deck or default to "New Deck"
         if (!string.IsNullOrEmpty(currentLoadedDeckName))
         {
-            int index = deckNames.IndexOf(currentLoadedDeckName);
+            int index = options.IndexOf(currentLoadedDeckName);
             if (index != -1)
             {
                 savedDecksDropdown.value = index;
-                savedDecksDropdown.RefreshShownValue();
+            }
+            else
+            {
+                savedDecksDropdown.value = 0; // "New Deck"
             }
         }
+        else
+        {
+            savedDecksDropdown.value = 0; // "New Deck"
+        }
+
+        savedDecksDropdown.RefreshShownValue();
     }
 
     void OnSavedDeckSelected(int index)
     {
-        if (!savedDecksDropdown.interactable || savedDecksDropdown.options[index].text == "No saved decks")
-            return;
-
         string selectedDeckName = savedDecksDropdown.options[index].text;
+
+        if (selectedDeckName == "New Deck")
+        {
+            OnClearDeckClicked();
+            deckNameInputField.text = "";
+            currentLoadedDeckName = null;
+            return;
+        }
+
         LoadDeckFromFile(selectedDeckName);
     }
 
     void UpdateDeckDetails()
     {
+        currentDeckSize = 0;
         currentDeckSize = currentDeckButtons.Count;
         currentDeckSizeText.text = $"Deck Size: {currentDeckSize}";
 
+        currentDeckAverageCost = 0;
         currentDeckAverageCost = currentDeckSize > 0 ? (int)deckCards.Average(card => card.cardCost) : 0;
         currentDeckAverageCostText.text = $"Cost Avg: {currentDeckAverageCost}";
 
+        currentDeckSpellCount = 0;
         currentDeckSpellCount = deckCards.Count(card => card.cardType == CardSO.CardType.Spell);
         currentDeckSpellCountText.text = $"Spells: {currentDeckSpellCount}";
 
+        currentDeckUnitCount = 0;
         currentDeckUnitCount = deckCards.Count(card => card.cardType == CardSO.CardType.Unit);
         currentDeckUnitCountText.text = $"Units: {currentDeckUnitCount}";
     }
@@ -265,6 +281,7 @@ public class ArchivesMenuController : MonoBehaviour
 
     private void OnBackClicked()
     {
+        cardDetailsPanel.SetActive(false);
         GameManager.Instance.UIManager.HidePanel("ArchivesMenu");
         GameManager.Instance.UIManager.ShowPanel("MainMenu");
     }

@@ -24,8 +24,8 @@ public class MainMenuController : MonoBehaviour
 
     private void OnStartGameClicked()
     {
-        // Load the game scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Battlefield");
+        GameManager.Instance.UIManager.HidePanel("MainMenu");
+        GameManager.Instance.UIManager.ShowPanel("SelectionMenu");
     }
 
     private void OnSettingsClicked()
