@@ -9,6 +9,7 @@ using System.IO;
 public class ArchivesMenuController : MonoBehaviour
 {
     [Header("Card Databank")]
+    private CardDatabase cardDatabase;
     public TMP_InputField searchInputField;
     public TMP_Dropdown cardTypeFilterDropdown;
     public TMP_Dropdown affiliationFilterDropdown;
@@ -54,6 +55,7 @@ public class ArchivesMenuController : MonoBehaviour
     private void Start()
     {
         //Card Databank Initialization
+        cardDatabase = Resources.Load<CardDatabase>("CardDatabase");
         LoadAllCards();
         UpdateCardDisplay();
         searchInputField.onValueChanged.AddListener(_ => UpdateCardDisplay());
@@ -441,7 +443,7 @@ public class ArchivesMenuController : MonoBehaviour
         deckCards.Clear();
         foreach (var cardID in savedDeck.cardIDs)
         {
-            CardSO card = allCards.FirstOrDefault(c => c.cardID == cardID);
+            CardSO card = cardDatabase.GetCardByGUID(cardID);
             if (card != null)
             {
                 deckCards.Add(card);

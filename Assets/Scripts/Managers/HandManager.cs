@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HandManager : MonoBehaviour
 {
@@ -15,7 +16,10 @@ public class HandManager : MonoBehaviour
 
     void Start()
     {
-        
+        if (SceneManager.GetActiveScene().name != "Battlefield")
+        {
+            return;
+        }
     }
 
     void Update()

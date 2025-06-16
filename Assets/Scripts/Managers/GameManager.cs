@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Managers")]
     public static GameManager Instance { get; private set; }
 
     private OptionsManager _optionsManager;
@@ -31,6 +32,14 @@ public class GameManager : MonoBehaviour
     private CardEffectRunner _cardEffectRunner;
     public CardEffectRunner CardEffectRunner => _cardEffectRunner;
 
+    private HandManager _handManager;
+    public HandManager HandManager => _handManager;
+
+    [Header("Battle Details")]
+    public CardDatabase CardDatabase;
+    public SavedDeck selectedDeck;
+
+    [Header("Player(s) Details")]
     private int playerHealth;
     private int playerEssence;
 
@@ -58,6 +67,7 @@ public class GameManager : MonoBehaviour
         _uiManager = LoadOrInstantiateManager(ref _uiManager, "UIManager");
         _audioManager = LoadOrInstantiateManager(ref _audioManager, "AudioManager");
         _deckManager = LoadOrInstantiateManager(ref _deckManager, "DeckManager");
+        _handManager = LoadOrInstantiateManager(ref _handManager, "HandManager");
         _textSizeManager = LoadOrInstantiateManager(ref _textSizeManager, "TextSizeManager");
         _graphicsSettingsManager = LoadOrInstantiateManager(ref _graphicsSettingsManager, "GraphicsSettingsManager");
         _optionsManager = LoadOrInstantiateManager(ref _optionsManager, "OptionsManager");
