@@ -11,10 +11,10 @@ public class HealthComponent : MonoBehaviour
 
     private void Awake()
     {
-        if (SceneManager.GetActiveScene().name != "Battlefield")
+        /*if (SceneManager.GetActiveScene().name != "Battlefield")
         {
             this.enabled = false; // Disable this script if not in the Battlefield scene
-        }
+        }*/
 
         cardData = GetComponent<CardDisplay>().cardInstance;
         startingHealth  = cardData.cardAttack;

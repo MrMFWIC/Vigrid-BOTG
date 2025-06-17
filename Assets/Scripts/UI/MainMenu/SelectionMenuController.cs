@@ -39,22 +39,22 @@ public class SelectionMenuController : MonoBehaviour
     public Button confirmButton;
     public bool deckSelected = false;
     public bool leaderSelected = false;
+    private bool isLoading = false;
 
     private void Start()
     {
         PopulateDeckGrid();
         PopulateLeaderGrid();
         infoPanel.SetActive(false);
+        backButton.onClick.RemoveAllListeners();
         backButton.onClick.AddListener(OnBackClicked);
+        confirmButton.onClick.RemoveAllListeners();
+        confirmButton.onClick.AddListener(OnConfirmClicked);
     }
 
-    void Update()
+    void TryEnableConfirmButton()
     {
-        confirmButton.gameObject.SetActive(deckSelected && leaderSelected);
-        if (confirmButton.interactable)
-        {
-            confirmButton.onClick.AddListener(() => OnConfirmClicked(selectedLeader, selectedDeck));
-        }
+        confirmButton.gameObject.SetActive(selectedDeck != null && selectedLeader != null);
     }
 
     void PopulateDeckGrid()
@@ -107,7 +107,7 @@ public class SelectionMenuController : MonoBehaviour
             List<CardSO> cards = new List<CardSO>();
             foreach (var id in savedDeck.cardIDs)
             {
-                CardSO card = GameManager.Instance.CardDatabase.GetCardByID(id);
+                CardSO card = GameManager.Instance.cardDatabase.GetCardByID(id);
                 if (card != null)
                     cards.Add(card);
                 else
@@ -156,6 +156,7 @@ public class SelectionMenuController : MonoBehaviour
         deckSelected = true;
         selectedDeckNameText.text = $"Selected: {deck.deckName}";
         Debug.Log($"Deck selected: {deck.deckName}");
+        TryEnableConfirmButton();
     }
 
     void PopulateLeaderGrid()
@@ -209,21 +210,40 @@ public class SelectionMenuController : MonoBehaviour
         leaderSelected = true;
         selectedLeaderNameText.text = $"Selected: {leader.leaderName}";
         Debug.Log($"Leader selected: {leader.leaderName}");
+        TryEnableConfirmButton();
     }
 
-    void OnConfirmClicked(LeaderSO leader, SavedDeck deck)
+    void OnConfirmClicked()
     {
-        GameManager.Instance.selectedDeck = deck;
+        if (isLoading) return;
+        isLoading = true;
+
+        GameManager.Instance.selectedDeck = selectedDeck;
         Debug.Log($"GameManager Selected Deck: {GameManager.Instance.selectedDeck}");
-        GameManager.Instance.selectedLeader = leader;
+        GameManager.Instance.selectedLeader = selectedLeader;
         Debug.Log($"GameManager Selected Leader: {GameManager.Instance.selectedLeader}");
 
         // Load the battlefield scene or start the game logic
+        StartCoroutine(LoadBattlefieldScene());
     }
 
     private void OnBackClicked()
     {
         GameManager.Instance.UIManager.HidePanel("SelectionMenu");
         GameManager.Instance.UIManager.ShowPanel("MainMenu");
+    }
+
+    IEnumerator LoadBattlefieldScene()
+    {
+        Debug.Log("Loading Battlefield Scene...");
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Battlefield");
+
+        //Show loading screen or progress bar if needed
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        Debug.Log("Battlefield Scene Loaded Successfully.");
+        //Hide loading screen or progress bar if shown
     }
 }

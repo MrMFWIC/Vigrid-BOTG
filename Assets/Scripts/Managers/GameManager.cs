@@ -5,38 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Managers")]
     public static GameManager Instance { get; private set; }
 
-    private OptionsManager _optionsManager;
-    public OptionsManager OptionsManager => _optionsManager;
+    [Header("Managers")]
+    public OptionsManager OptionsManager => OptionsManager.Instance;
+    public AudioManager AudioManager => AudioManager.Instance;
+    public DeckManager DeckManager => DeckManager.Instance;
+    public UIManager UIManager => UIManager.Instance;
+    public TextSizeManager TextSizeManager => TextSizeManager.Instance;
+    public GraphicsSettingsManager GraphicsSettingsManager => GraphicsSettingsManager.Instance;
+    public CardPlacementManager CardPlacementManager => CardPlacementManager.Instance;
+    public HandManager HandManager => HandManager.Instance;  
 
-    private AudioManager _audioManager;
-    public AudioManager AudioManager => _audioManager;
-
-    private DeckManager _deckManager;
-    public DeckManager DeckManager => _deckManager;
-    
-    private UIManager _uiManager;
-    public UIManager UIManager => _uiManager;
-    
-    private TextSizeManager _textSizeManager;
-    public TextSizeManager TextSizeManager => _textSizeManager;
-    
-    private GraphicsSettingsManager _graphicsSettingsManager;
-    public GraphicsSettingsManager GraphicsSettingsManager => _graphicsSettingsManager;
-    
-    private CardPlacementManager _cardPlacementManager;
-    public CardPlacementManager CardPlacementManager => _cardPlacementManager;
-    
     private CardEffectRunner _cardEffectRunner;
     public CardEffectRunner CardEffectRunner => _cardEffectRunner;
 
-    private HandManager _handManager;
-    public HandManager HandManager => _handManager;
 
     [Header("Battle Details")]
-    public CardDatabase CardDatabase;
+    public CardDatabase cardDatabase;
     public SavedDeck selectedDeck;
     public LeaderSO selectedLeader;
 
@@ -46,37 +32,48 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            InitializeManagers();
-
-            if (SceneManager.GetActiveScene().name == "Battlefield")
-            {
-                InitializeBattlefieldManagers();
-            }
-        }
-        else if (Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        // Only the true singleton subscribes
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        Debug.LogWarning("[GameManager] Subscribed to sceneLoaded.");
     }
 
-    private void InitializeManagers()
+    private void OnDisable()
     {
-        _uiManager = LoadOrInstantiateManager(ref _uiManager, "UIManager");
-        _audioManager = LoadOrInstantiateManager(ref _audioManager, "AudioManager");
-        _deckManager = LoadOrInstantiateManager(ref _deckManager, "DeckManager");
-        _handManager = LoadOrInstantiateManager(ref _handManager, "HandManager");
-        _textSizeManager = LoadOrInstantiateManager(ref _textSizeManager, "TextSizeManager");
-        _graphicsSettingsManager = LoadOrInstantiateManager(ref _graphicsSettingsManager, "GraphicsSettingsManager");
-        _optionsManager = LoadOrInstantiateManager(ref _optionsManager, "OptionsManager");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        cardDatabase = Resources.Load<CardDatabase>("CardDatabase");
+        Debug.Log(cardDatabase == null ?
+                               "CardDatabase not found in Resources." :
+                               "CardDatabase loaded successfully.");
+
+        if (scene.name == "Battlefield")
+        {
+            InitializeBattlefieldManagers();
+            DeckManager.InitializeDeck();
+            CardPlacementManager.BeginInitialization();
+        }
     }
 
     private void InitializeBattlefieldManagers()
     {
-        _cardPlacementManager = LoadOrInstantiateManager(ref _cardPlacementManager, "CardPlacementManager");
         _cardEffectRunner = LoadOrInstantiateManager(ref _cardEffectRunner, "CardEffectRunner");
     }
 
@@ -84,22 +81,28 @@ public class GameManager : MonoBehaviour
     {
         managerRef = GetComponentInChildren<T>();
 
-        if (managerRef == null)
+        if (managerRef != null)
+        {
+            Debug.Log($"{prefabName} found in children.");
+        }
+        else if (managerRef == null)
         {
             GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
+            Debug.Log(prefab == null ?
+                               $"Prefab '{prefabName}' not found in Resources/Prefabs" :
+                               $"Prefab '{prefabName}' loaded, instantiating now.");
             if (prefab == null)
             {
                 Debug.LogError($"{prefabName} prefab not found.");
+                return null;
             }
             else
             {
                 GameObject instance = Instantiate(prefab, transform.position, Quaternion.identity, transform);
                 managerRef = instance.GetComponent<T>();
-
-                if (managerRef == null)
-                {
-                    Debug.LogError($"{prefabName} component missing on prefab.");
-                }
+                Debug.Log(managerRef == null ?
+                                  $"{prefabName} was instantiated but has no {typeof(T).Name} component!" :
+                                  $"{prefabName} instantiated successfully.");
             }
         }
 

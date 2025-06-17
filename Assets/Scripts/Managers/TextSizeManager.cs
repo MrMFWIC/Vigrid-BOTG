@@ -5,6 +5,20 @@ using TMPro;
 
 public class TextSizeManager : MonoBehaviour
 {
+    public static TextSizeManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     public enum TextSize
     {
         Small,

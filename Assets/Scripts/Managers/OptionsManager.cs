@@ -4,11 +4,23 @@ using UnityEngine;
 
 public class OptionsManager : MonoBehaviour
 {
-    private AudioManager audioManager;
+    public static OptionsManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     void Start()
     {
-        audioManager = GameManager.Instance.AudioManager;
+        Debug.Log("OptionsManager Start called.");
     }
 
     void Update()

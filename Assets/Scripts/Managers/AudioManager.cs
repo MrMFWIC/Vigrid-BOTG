@@ -5,12 +5,26 @@ using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager Instance { get; private set; }
+
     public AudioMixer audioMixer;
     public string masterVolumeParameter = "MasterVolume";
     public string musicVolumeParameter = "MusicVolume";
     public string sfxVolumeParameter = "SFXVolume";
     private float previousMasterVolume = 0f;
     public bool isMuted = false;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     public void SetMasterVolume(float volume)
     {

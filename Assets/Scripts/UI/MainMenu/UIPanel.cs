@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class UIPanel
+public class UIPanel : MonoBehaviour
 {
     public string panelName;
     public CanvasGroup canvasGroup;

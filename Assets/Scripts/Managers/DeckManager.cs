@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class DeckManager : MonoBehaviour
 {
+    public static DeckManager Instance { get; private set; }
+
     private HandManager handManager;
     private SavedDeck selectedDeck;
     private CardDatabase cardDatabase;
@@ -15,14 +18,39 @@ public class DeckManager : MonoBehaviour
     public int maxHandSize;
     public int currentHandSize;
 
-    private void Start()
+    private bool deckInitialized = false;
+
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void InitializeDeck()
+    {
+        Debug.LogWarning($"[DeckManager] InitializeDeck called. Scene: {SceneManager.GetActiveScene().name}\nStackTrace:\n{Environment.StackTrace}");
+        Debug.Log($"DeckManager Initialize Deck called; scene= {SceneManager.GetActiveScene().name}");
+
         if (SceneManager.GetActiveScene().name != "Battlefield")
         {
             return;
         }
 
-        cardDatabase = GameManager.Instance.CardDatabase;
+        if (deckInitialized)
+        {
+            Debug.LogWarning("DeckManager has already been initialized. Skipping initialization.");
+            return;
+        }
+
+        Debug.Log("DeckManager started. Initializing deck...");
+
+        cardDatabase = GameManager.Instance.cardDatabase;
         if (cardDatabase == null)
         {
             Debug.LogError("CardDatabase is not assigned in GameManager. Please assign it in the inspector.");
@@ -57,6 +85,8 @@ public class DeckManager : MonoBehaviour
         {
             DrawCard();
         }
+
+        deckInitialized = true;
     }
 
     private void Update()
@@ -84,12 +114,13 @@ public class DeckManager : MonoBehaviour
         string path = Path.Combine(Application.persistentDataPath, selectedDeckName + ".json");
         if (!File.Exists(path))
         {
-            Debug.LogError($"Deck file not founc: {path}");
+            Debug.LogError($"Deck file not found: {path}");
             return;
         }
 
         string json = File.ReadAllText(path);
         selectedDeck = JsonUtility.FromJson<SavedDeck>(json);
+        Debug.Log($"Loaded deck: {selectedDeck.deckName} with {selectedDeck.cardIDs.Count} cards.");
     }
 
     private bool ValidateDeckCardIDs()
@@ -118,7 +149,7 @@ public class DeckManager : MonoBehaviour
     {
         for (int i = 0; i < shuffledDeck.Count; i++)
         {
-            int randomIndex = Random.Range(i, shuffledDeck.Count);
+            int randomIndex = UnityEngine.Random.Range(i, shuffledDeck.Count);
             (shuffledDeck[i], shuffledDeck[randomIndex]) = (shuffledDeck[randomIndex], shuffledDeck[i]);
         }
     }

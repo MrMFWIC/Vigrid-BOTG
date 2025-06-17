@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class GraphicsSettingsManager : MonoBehaviour
 {
+    public static GraphicsSettingsManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     public string[] GetQualityOptions()
     {
         return QualitySettings.names;

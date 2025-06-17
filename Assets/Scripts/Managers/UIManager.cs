@@ -5,26 +5,68 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance { get; private set; }
+
     public List<UIPanel> panels;
 
-    private Dictionary<string, CanvasGroup> panelDict;
+    private Dictionary<string, CanvasGroup> panelDict = new();
+    private static bool sceneLoadedSubscribed = false;
 
     void Awake()
     {
-        panelDict = new Dictionary<string, CanvasGroup>();
+        Debug.Log("UIManager Awake called.");
 
-        foreach (var panel in panels)
+        if (Instance != null && Instance != this)
         {
-            if (!panelDict.ContainsKey(panel.panelName))
-                panelDict.Add(panel.panelName, panel.canvasGroup);
+            Destroy(gameObject);
+            return;
         }
 
-        HideAllPanels();
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
 
-        if (SceneManager.GetActiveScene().name == "MainMenu")
+        if (!sceneLoadedSubscribed)
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            sceneLoadedSubscribed = true;
+        }
+      
+        //InitializePanelsInScene();
+    }
+
+    private void OnDestroy()
+    {
+        if (sceneLoadedSubscribed)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            sceneLoadedSubscribed = false;
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializePanelsInScene();
+
+        if (scene.name == "MainMenu")
         {
             ShowPanel("MainMenu");
         }
+    }
+
+    private void InitializePanelsInScene()
+    {
+        panelDict.Clear();
+
+        UIPanel[] scenePanels = FindObjectsByType<UIPanel>(FindObjectsSortMode.None);
+        foreach (var panel in scenePanels)
+        {
+            if (panel != null && panel.canvasGroup != null && !panelDict.ContainsKey(panel.panelName))
+            {
+                panelDict.Add(panel.panelName, panel.canvasGroup);
+            }
+        }
+
+        HideAllPanels();
     }
 
     public void HideAllPanels()

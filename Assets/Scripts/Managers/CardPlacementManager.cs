@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class CardPlacementManager : MonoBehaviour
 {
+    public static CardPlacementManager Instance { get; private set; }
+
     public CardPlacementCell[] playerSlots;
     public CardPlacementCell[] enemySlots;
 
@@ -15,17 +17,38 @@ public class CardPlacementManager : MonoBehaviour
 
     private void Awake()
     {
-        GameObject canvas = GameObject.FindFirstObjectByType<Canvas>().gameObject;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void BeginInitialization()
+    {
+        StartCoroutine(DelayedInitialize());
+    }
+
+    private void InitializeCardPlacementManager()
+    {
+        GameObject canvas = GameObject.FindGameObjectWithTag("BattlefieldCanvas");
 
         if (canvas != null)
         {
-            playerSlotsParent = canvas.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "PlayerSlots")?.gameObject;
-            enemySlotsParent = canvas.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "EnemySlots")?.gameObject;
+            playerSlotsParent = FindChildByName(canvas.transform, "PlayerSlots");
+            enemySlotsParent = FindChildByName(canvas.transform, "EnemySlots");
 
             if (playerSlotsParent == null || enemySlotsParent == null)
             {
                 Debug.LogError("Parent objects not found in the canvas");
                 return;
+            }
+            else
+            {
+                FillSlotsArrays();
             }
         }
         else
@@ -33,8 +56,19 @@ public class CardPlacementManager : MonoBehaviour
             Debug.LogError("Canvas not found in the scene");
             return;
         }
+    }
 
-        FillSlotsArrays();
+    private GameObject FindChildByName(Transform parent, string name)
+    {
+        foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == name)
+            {
+                return child.gameObject;
+            }
+        }
+
+        return null;
     }
 
     private void FillSlotsArrays()
@@ -137,5 +171,11 @@ public class CardPlacementManager : MonoBehaviour
             enemySlots[index].RemoveCard();
         }
         enemySlots[index].PlaceCard(card);*/
+    }
+
+    IEnumerator DelayedInitialize()
+    {
+        yield return null; // wait one frame
+        InitializeCardPlacementManager();
     }
 }
