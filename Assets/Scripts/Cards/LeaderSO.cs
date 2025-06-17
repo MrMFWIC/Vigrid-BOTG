@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
-using System;
 
 [CreateAssetMenu(fileName = "New Leader", menuName = "Leaders")]
 public class LeaderSO : ScriptableObject
@@ -20,12 +21,8 @@ public class LeaderSO : ScriptableObject
     {
         if (string.IsNullOrEmpty(leaderID))
         {
-            leaderID = Guid.NewGuid().ToString();
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets();
+            leaderID = $"{Regex.Replace(leaderName.ToLower(), "[^a-z0-9]", "")}_001";
         }
     }
 #endif
-
-
 }

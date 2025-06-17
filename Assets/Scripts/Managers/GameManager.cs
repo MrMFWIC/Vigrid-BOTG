@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     [Header("Battle Details")]
     public CardDatabase CardDatabase;
     public SavedDeck selectedDeck;
+    public LeaderSO selectedLeader;
 
     [Header("Player(s) Details")]
     private int playerHealth;

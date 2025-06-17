@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CardDatabase", menuName = "Cards/Card Database")]
@@ -10,12 +11,13 @@ public class CardDatabase : ScriptableObject
     [System.Serializable]
     public class CardEntry
     {
-        public string guid;
         public CardSO card;
     }
 
-    public CardSO GetCardByGUID(string guid)
+    public CardSO GetCardByID(string cardID)
     {
-        return allCards.Find(entry => entry.guid == guid)?.card;
+        return allCards
+            .FirstOrDefault(entry => entry.card != null && entry.card.cardID == cardID)
+            ?.card;
     }
 }

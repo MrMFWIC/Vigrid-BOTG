@@ -10,8 +10,11 @@ public class DeckButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 {
     public string deckName;
     public Image backgroundImage;
+    public Image deckImage;
     private Color originalColor;
     public TextMeshProUGUI deckNameText;
+
+    private bool isSelected = false;
 
     private void Awake()
     {
@@ -26,11 +29,18 @@ public class DeckButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (isSelected) return;
         backgroundImage.color = Color.green;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (isSelected) return;
         backgroundImage.color = originalColor;
+    }
+
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
     }
 }

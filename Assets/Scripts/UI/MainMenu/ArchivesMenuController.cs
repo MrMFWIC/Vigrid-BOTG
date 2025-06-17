@@ -443,7 +443,7 @@ public class ArchivesMenuController : MonoBehaviour
         deckCards.Clear();
         foreach (var cardID in savedDeck.cardIDs)
         {
-            CardSO card = cardDatabase.GetCardByGUID(cardID);
+            CardSO card = cardDatabase.GetCardByID(cardID);
             if (card != null)
             {
                 deckCards.Add(card);

@@ -339,6 +339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckName: 
   backgroundImage: {fileID: 2538226673812501910}
+  deckImage: {fileID: 1828644298808462362}
   deckNameText: {fileID: 1976094265676650681}
 --- !u!1 &8353524396185985674
 GameObject:

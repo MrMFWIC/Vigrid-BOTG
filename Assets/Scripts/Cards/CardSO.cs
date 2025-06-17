@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Text.RegularExpressions;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Cards")]
 public class CardSO : ScriptableObject
@@ -42,9 +43,7 @@ public class CardSO : ScriptableObject
     {
         if (string.IsNullOrEmpty(cardID))
         {
-            cardID = Guid.NewGuid().ToString();
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets();
+            cardID = $"{Regex.Replace(cardName.ToLower(), "[^a-z0-9]", "")}_001";
         }
     }
 #endif
