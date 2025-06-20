@@ -205,3 +205,4 @@ MonoBehaviour:
   cardInCell: {fileID: 0}
   highlight: {fileID: 4228464213353649136}
   cardRectTransform: {fileID: 0}
+  cardPlacementManager: {fileID: 0}

@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems; // For testing card burial REMOVE LATER
 
-public class CardPlacementCell : MonoBehaviour
+public class CardPlacementCell : MonoBehaviour, IPointerClickHandler // For testing card burial REMOVE LATER
 {
     public int cellIndex;
     public bool isOccupied = false;
@@ -14,7 +15,7 @@ public class CardPlacementCell : MonoBehaviour
 
     private void Start()
     {
-        cardPlacementManager = FindFirstObjectByType<CardPlacementManager>();
+        cardPlacementManager = GameManager.Instance.CardPlacementManager;
     }
 
     public void HighlightSlot(bool state, GameObject card)
@@ -70,7 +71,15 @@ public class CardPlacementCell : MonoBehaviour
         Debug.Log("Card parent after placement: " + newObj.transform.parent.name);
     }
 
-    public void RemoveCard()
+    public void BuryCard()
+    {
+        if (!isOccupied || cardInCell == null) return;
+        
+        GameManager.Instance.GraveyardManager.PlaceCardInPlayerGraveyard(cardInCell);
+        RemoveCard();
+    }
+
+    private void RemoveCard()
     {
         if (isOccupied)
         {
@@ -81,6 +90,20 @@ public class CardPlacementCell : MonoBehaviour
         else
         {
             Debug.LogWarning("Cell is already empty!");
+        }
+    }
+
+    // For testing card burial REMOVE LATER
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Only respond to left click
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            if (isOccupied && cardInCell != null)
+            {
+                Debug.Log($"Left-clicked occupied slot {cellIndex}. Burying card.");
+                BuryCard();
+            }
         }
     }
 }

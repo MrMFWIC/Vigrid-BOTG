@@ -17,6 +17,7 @@ public class DeckManager : MonoBehaviour
     public int startingHandSize = 5;
     public int maxHandSize;
     public int currentHandSize;
+    public int startingDeckSize;
 
     private bool deckInitialized = false;
 
@@ -80,6 +81,9 @@ public class DeckManager : MonoBehaviour
 
         shuffledDeck = new List<string>(selectedDeck.cardIDs);
         ShuffleDeck();
+
+        startingDeckSize = shuffledDeck.Count;
+        DeckVisualController.Instance.UpdateDeckVisual(GetCardsRemaining(), startingDeckSize);
 
         for (int i = 0; i < startingHandSize; i++)
         {
@@ -169,10 +173,16 @@ public class DeckManager : MonoBehaviour
         if (cardData != null)
         {
             handManager.AddCardToHand(cardData);
+            DeckVisualController.Instance.UpdateDeckVisual(GetCardsRemaining(), startingDeckSize);
         }
         else
         {
             Debug.LogError($"Card with GUID: {cardID} not found in CardDatabase.");
         }
+    }
+
+    public int GetCardsRemaining()
+    {
+        return shuffledDeck.Count - currentIndex;
     }
 }

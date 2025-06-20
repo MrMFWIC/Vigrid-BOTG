@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public TextSizeManager TextSizeManager => TextSizeManager.Instance;
     public GraphicsSettingsManager GraphicsSettingsManager => GraphicsSettingsManager.Instance;
     public CardPlacementManager CardPlacementManager => CardPlacementManager.Instance;
+    public GraveyardManager GraveyardManager => GraveyardManager.Instance;
     public HandManager HandManager => HandManager.Instance;  
 
     private CardEffectRunner _cardEffectRunner;
@@ -69,6 +70,7 @@ public class GameManager : MonoBehaviour
             InitializeBattlefieldManagers();
             DeckManager.InitializeDeck();
             CardPlacementManager.BeginInitialization();
+            GraveyardManager.BeginInitialization();
         }
     }
 
